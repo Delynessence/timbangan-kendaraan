@@ -46,40 +46,40 @@
   <script>
     const espIP = 'http://192.168.1.8'; // Replace with your ESP8266's IP address
 
-    function setVehicleType() {
-      const vehicleType = document.getElementById("vehicleType").value;
-      const url = `${espIP}/setVehicleType?vehicleType=${encodeURIComponent(vehicleType)}`;
+    // Misalnya, mengganti panggilan ke API seperti ini
+function getWeight() {
+  fetch('https://192.168.1.8/getWeight') // Menggunakan HTTPS
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.text();
+    })
+    .then(data => {
+      console.log('Weight:', data);
+    })
+    .catch(error => {
+      console.error('Error fetching weight:', error);
+    });
+}
 
-      fetch(url)
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById("status").innerHTML = `Vehicle type set to: ${vehicleType}`;
-          document.getElementById("status").style.color = 'green';
-        })
-        .catch(err => {
-          document.getElementById("status").innerHTML = `Error setting vehicle type`;
-          document.getElementById("status").style.color = 'red';
-        });
-    }
+// Saat memanggil setVehicleType
+function setVehicleType(vehicleType) {
+  fetch(`https://192.168.1.8/setVehicleType?vehicleType=${vehicleType}`) // Menggunakan HTTPS
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.text();
+    })
+    .then(data => {
+      console.log(data);
+    })
+    .catch(error => {
+      console.error('Error setting vehicle type:', error);
+    });
+}
 
-    function getWeight() {
-      fetch(`${espIP}/getWeight`)
-        .then(response => response.text())
-        .then(weight => {
-          const parsedWeight = parseFloat(weight);
-          document.getElementById("weight").innerHTML = `Current Weight: ${parsedWeight.toFixed(2)} Kg`;
-
-          // If weight exceeds the limit, show alert
-          if (parsedWeight > 10000) { // Example: adjust this threshold according to the max weight
-            document.getElementById("alert").style.display = 'block';
-          } else {
-            document.getElementById("alert").style.display = 'none';
-          }
-        })
-        .catch(err => {
-          console.log("Error fetching weight: ", err);
-        });
-    }
 
     // Fetch the weight every 2 seconds
     setInterval(getWeight, 2000);
