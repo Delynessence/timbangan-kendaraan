@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Weight Monitor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+        }
+        #weightDisplay {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Vehicle Weight Monitor</h1>
+        <div class="form-group">
+            <label for="vehicleType">Select Vehicle Type:</label>
+            <select id="vehicleType" class="form-control">
+                <option value="Car">Car</option>
+                <option value="Truck">Truck</option>
+                <option value="Bike">Bike</option>
+            </select>
+        </div>
+        <button id="setVehicleTypeBtn" class="btn btn-primary mt-3">Set Vehicle Type</button>
+
+        <h2 class="mt-5">Current Weight:</h2>
+        <div id="weightDisplay">Loading...</div>
+    </div>
+
+    <script>
+        document.getElementById('setVehicleTypeBtn').addEventListener('click', function() {
+            var vehicleType = document.getElementById('vehicleType').value;
+            var url = 'http://192.168.1.8/setVehicleType?type=' + vehicleType;
+
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    alert(data);
+                });
+        });
+
+        function fetchWeight() {
+            var url = 'http://192.168.1.8/getWeight';
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('weightDisplay').textContent = data + " Kg";
+                });
+        }
+
+        setInterval(fetchWeight, 2000);  // Refresh weight every 2 seconds
+    </script>
+</body>
+</html>
