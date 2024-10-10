@@ -4,103 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real-Time Vehicle Weighing</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
-            text-align: center;
-            padding: 50px;
-        }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-        }
-        .weight-display {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .vehicle-select {
-            margin-bottom: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .status {
-            margin-top: 20px;
-            font-size: 18px;
-            color: red;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/CSS/styles.css">
 </head>
 <body>
-    <h1>Vehicle Weighing System</h1>
-
-    <div>
-        <label for="vehicleType">Select Vehicle Type:</label>
-        <select id="vehicleType">
-            <option value="Car">Car</option>
-            <option value="Truck">Truck</option>
-            <option value="Bus">Bus</option>
-            <option value="Van">Van</option>
-            <!-- Add other vehicle types as needed -->
-        </select>
-        <button onclick="setVehicleType()">Set Vehicle Type</button>
+  <div class="container">
+    <div class="card">
+        <h2>Real-Time Vehicle Weighing</h2>
+        <div class="weight-info">
+            <strong>Current Weight:</strong>
+            <p id="currentWeight">0 Kg</p>
+        </div>
+        <div class="status" id="statusMessage"></div>
     </div>
+</div>
 
-    <div>
-        <p>Current Weight: <span id="currentWeight">0</span> Kg</p>
-        <p>Max Weight: <span id="maxWeight">0</span> Kg</p>
-        <p id="statusMessage"></p>
-    </div>
 
-    <script>
-        const vehicleUrl = "https://script.google.com/macros/s/AKfycbw7XOIB4kGaH1tgXyqa1vMlRUzlv0HoEQiO45o6hovSHovHVxu5Wy2sIbJkq75n0cWIQg/exec";
-
-        function setVehicleType() {
-            const vehicleType = document.getElementById("vehicleType").value;
-            fetch(`${vehicleUrl}?vehicleType=${vehicleType}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("maxWeight").innerText = data.maxWeight;
-                    document.getElementById("currentWeight").innerText = data.currentWeight;
-
-                    // Display overload status
-                    if (data.currentWeight > data.maxWeight) {
-                        document.getElementById("statusMessage").innerText = "Overload!";
-                    } else {
-                        document.getElementById("statusMessage").innerText = "Within limits.";
-                    }
-                })
-                .catch(error => console.error('Error fetching vehicle data:', error));
-        }
-
-        // Optional: Update the weight display every 2 seconds
-        setInterval(() => {
-            const vehicleType = document.getElementById("vehicleType").value;
-            if (vehicleType) {
-                fetch(`${vehicleUrl}?vehicleType=${vehicleType}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById("currentWeight").innerText = data.currentWeight;
-                    });
-            }
-        }, 2000);
-    </script>
+    <script src="src/JS/script.js"></script>
 </body>
 </html>

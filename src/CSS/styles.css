@@ -1,20 +1,130 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #130a3b, #132e52, #681717); /* Dark gradient background */
+  background-size: 200% 200%; /* Allows for animation */
+  animation: gradientAnimation 5s ease infinite; /* Animation for gradient */
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+@keyframes gradientAnimation {
+  0% {
+      background-position: 0% 100%; /* Start at bottom right */
   }
-  
-  #container {
-    margin: 50px auto;
-    width: 300px;
+  50% {
+      background-position: 100% 0%; /* Move to top left */
   }
-  
-  #status {
-    margin: 20px;
-    font-size: 1.2em;
+  100% {
+      background-position: 0% 100%; /* Loop back */
   }
-  
-  #overload {
-    color: red;
-    font-weight: bold;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  width: 450px;
+  height: 250px; /* Increased height for better spacing */
+  background: rgba(7, 24, 46); /* Semi-transparent for depth */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 5px #e9f5ff solid;
+  overflow: hidden;
+  border-radius: 20px;
+  transition: transform 0.3s, box-shadow 0.3s; /* Added transition for hover effect */
+}
+
+.card:hover {
+  transform: translateY(-5px); /* Slight lift on hover */
+  box-shadow: 0 10px 20px rgba(0, 0, 0); /* Shadow effect on hover */
+}
+
+.card h2 {
+  z-index: 1;
+  color: white;
+  font-size: 2em;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  width: 150px;
+  background-image: linear-gradient(180deg, rgb(0, 183, 255), rgb(255, 48, 255));
+  height: 300%;
+  animation: rotBGimg 3s linear infinite;
+  transition: all 0.2s linear;
+  z-index: 0; /* Ensure background is behind */
+}
+
+@keyframes rotBGimg {
+  from {
+      transform: rotate(0deg);
   }
-  
+  to {
+      transform: rotate(360deg);
+  }
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  background: rgba(7, 24, 46); /* Semi-transparent for depth */
+  inset: 5px;
+  border-radius: 15px;
+}
+
+.weight-info {
+  z-index: 1; /* Ensure this is on top */
+  text-align: center;
+}
+
+.weight-info strong {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.weight-info p {
+  margin: 0;
+  font-size: 1.8em; /* Slightly larger text */
+  font-weight: bold;
+  color: #e9f5ff; /* Light color for contrast */
+}
+
+.status {
+  margin-top: 10px;
+  font-size: 18px;
+  color: red;
+  font-weight: bold;
+  z-index: 1; /* Ensure visibility */
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 480px) {
+  .card {
+      width: 90%; /* Full width on small screens */
+      height: auto; /* Auto height for content */
+      text-align: center;
+  }
+
+  .card h2 {
+      font-size: 1.5em; /* Smaller font size for heading */
+  }
+
+  .weight-info p {
+      font-size: 1.5em; /* Smaller font size for weight display */
+  }
+
+  .status {
+      font-size: 1rem; /* Smaller font size for status message */
+      margin-bottom: 10px;
+  }
+}

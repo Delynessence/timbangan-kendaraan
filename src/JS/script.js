@@ -1,29 +1,31 @@
-document.getElementById('vehicle-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    let vehicle = document.getElementById('vehicle-select').value;
-    
-    fetch('https://script.google.com/macros/s/AKfycbyldV64C-UN_ofXxscMjOMrdgKtQR2VCayEq-wXrizBKvqNeydALNENGGNhoQSa4-c/exec', {
-      method: 'POST',
-      body: JSON.stringify({ vehicle: vehicle })
-    })
-    .then(response => response.text())
-    .then(data => {
-      alert('Vehicle selection successful');
-      document.getElementById('status').innerText = 'Selected vehicle: ' + vehicle;
-    });
-  });
-  
-  function checkOverload() {
-    // Fetch data from spreadsheet and update overload status
-    fetch('https://script.google.com/macros/s/your_weight_script_url/exec')
-      .then(response => response.text())
-      .then(data => {
-        let weight = parseFloat(data);
-        if (weight > 0) {
-          document.getElementById('status').innerText = 'Current weight: ' + weight;
+const weightUrl = "https://script.google.com/macros/s/AKfycbwE4skSgj-AFvaGckixr8OwcBqtXvRkdcq8uHOaOHIZPWz4Z-j4ShIZz-YhlTZEDRrq/exec"; // Update to your Google Script URL
+
+        // Fetch the weight from Google Sheets
+        function fetchWeight() {
+            fetch(weightUrl)
+                .then(response => response.json())  // Parse the response as JSON
+                .then(data => {
+                    console.log("Received weight data:", data);
+                    const weight = parseFloat(data.weight);  // Access the "weight" property
+
+                    if (isNaN(weight)) {
+                        document.getElementById("currentWeight").innerText = "Invalid data";
+                    } else {
+                        document.getElementById("currentWeight").innerText = weight;
+                    }
+
+                    // Check if weight exceeds max weight
+                    if (data.overload) {
+                        document.getElementById("statusMessage").innerText = "Overload! Buzzer Activated";
+                    } else {
+                        document.getElementById("statusMessage").innerText = "Normal";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching weight:', error);
+                    document.getElementById("currentWeight").innerText = "Error";
+                });
         }
-      });
-  }
-  
-  setInterval(checkOverload, 1000);  // Update every second
-  
+
+        // Update weight every 1 second
+        setInterval(fetchWeight, 200);
