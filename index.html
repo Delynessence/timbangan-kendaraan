@@ -1,59 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle Weight Monitor</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            padding: 20px;
-        }
-        #weightDisplay {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Weight Monitor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    select, button {
+      padding: 10px;
+      font-size: 16px;
+    }
+    #status, #weight {
+      margin: 20px;
+      font-size: 20px;
+      color: green;
+    }
+    #alert {
+      font-size: 20px;
+      color: red;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="text-center">Vehicle Weight Monitor</h1>
-        <div class="form-group">
-            <label for="vehicleType">Select Vehicle Type:</label>
-            <select id="vehicleType" class="form-control">
-                <option value="Car">Car</option>
-                <option value="Truck">Truck</option>
-                <option value="Bike">Bike</option>
-            </select>
-        </div>
-        <button id="setVehicleTypeBtn" class="btn btn-primary mt-3">Set Vehicle Type</button>
 
-        <h2 class="mt-5">Current Weight:</h2>
-        <div id="weightDisplay">Loading...</div>
-    </div>
+  <h1>Vehicle Weight Monitoring</h1>
 
-    <script>
-        document.getElementById('setVehicleTypeBtn').addEventListener('click', function() {
-            var vehicleType = document.getElementById('vehicleType').value;
-            var url = 'http://192.168.1.8/setVehicleType?type=' + vehicleType;
+  <label for="vehicleType">Select Vehicle Type:</label>
+  <select id="vehicleType">
+    <option value="Truk">Truck</option>
+    <option value="Mobil">Car</option>
+    <option value="Motor">Motorcycle</option>
+  </select>
 
-            fetch(url)
-                .then(response => response.text())
-                .then(data => {
-                    alert(data);
-                });
+  <button onclick="setVehicleType()">Set Vehicle Type</button>
+
+  <div id="status">Waiting for vehicle selection...</div>
+  <div id="weight">Current Weight: 0 Kg</div>
+  <div id="alert">Overload! Maximum capacity exceeded!</div>
+
+  <script>
+    const espIP = 'http://192.168.1.8'; // Replace with your ESP8266's IP address
+
+    function setVehicleType() {
+      const vehicleType = document.getElementById("vehicleType").value;
+      const url = `${espIP}/setVehicleType?vehicleType=${encodeURIComponent(vehicleType)}`;
+
+      fetch(url)
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById("status").innerHTML = `Vehicle type set to: ${vehicleType}`;
+          document.getElementById("status").style.color = 'green';
+        })
+        .catch(err => {
+          document.getElementById("status").innerHTML = `Error setting vehicle type`;
+          document.getElementById("status").style.color = 'red';
         });
+    }
 
-        function fetchWeight() {
-            var url = 'http://192.168.1.8/getWeight';
-            fetch(url)
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('weightDisplay').textContent = data + " Kg";
-                });
-        }
+    function getWeight() {
+      fetch(`${espIP}/getWeight`)
+        .then(response => response.text())
+        .then(weight => {
+          const parsedWeight = parseFloat(weight);
+          document.getElementById("weight").innerHTML = `Current Weight: ${parsedWeight.toFixed(2)} Kg`;
 
-        setInterval(fetchWeight, 2000);  // Refresh weight every 2 seconds
-    </script>
+          // If weight exceeds the limit, show alert
+          if (parsedWeight > 10000) { // Example: adjust this threshold according to the max weight
+            document.getElementById("alert").style.display = 'block';
+          } else {
+            document.getElementById("alert").style.display = 'none';
+          }
+        })
+        .catch(err => {
+          console.log("Error fetching weight: ", err);
+        });
+    }
+
+    // Fetch the weight every 2 seconds
+    setInterval(getWeight, 2000);
+  </script>
+
 </body>
 </html>
