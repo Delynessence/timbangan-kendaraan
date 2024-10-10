@@ -4,7 +4,7 @@
 #include <HX711.h>
 #include <ESP8266WebServer.h>
 #include <WiFiClientSecureBearSSL.h>
-#include <ArduinoJson.h> 
+#include <ArduinoJson.h>
 
 #define DOUT D5
 #define CLK D6
@@ -37,22 +37,16 @@ Vehicle vehicles[] = {
   {"Motor", 500, 150}
 };
 
-// Fungsi untuk mengirim data ke Google Sheets
 void sendDataToGoogleSheet(float netWeight) {
-  // Membuat klien WiFi dengan koneksi aman
   WiFiClientSecure client;
-  client.setInsecure(); // Hanya untuk pengujian, abaikan verifikasi sertifikat
+  client.setInsecure(); // Ini digunakan untuk koneksi yang tidak aman
 
-  // Membuat URL permintaan GET
   String url = String(googleScriptUrlWeight) + "?weight=" + String(netWeight);
-  
-  // Menghubungkan ke Google Script
   if (client.connect("script.google.com", 443)) {
-    // Mengirimkan permintaan GET
     client.print(String("GET ") + url + " HTTP/1.1\r\n" +
                  "Host: script.google.com\r\n" +
                  "Connection: close\r\n\r\n");
-    delay(500); // Tunggu respons
+    delay(500);
   }
 }
 
@@ -64,7 +58,6 @@ void setup() {
   lcd.setCursor(0, 0);
   lcd.print("Connecting WiFi");
 
-  // Menghubungkan ke WiFi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     lcd.setCursor(0, 1);
@@ -77,7 +70,6 @@ void setup() {
   lcd.print("WiFi Connected");
   delay(2000);
   
-  // Mengatur HX711
   scale.begin(DOUT, CLK);
   scale.set_scale(calibrationFactor);
   scale.tare(); 
@@ -117,13 +109,12 @@ void setup() {
     server.send(200, "text/plain", response);
   });
 
-  server.begin(); // Memulai server
+  server.begin();
 }
 
 void loop() {
   server.handleClient();
 
-  // Membaca berat dari HX711
   if (scale.is_ready()) {
     currentWeight = scale.get_units(10);
     if (currentWeight < 0) currentWeight = 0;
@@ -148,6 +139,6 @@ void loop() {
       digitalWrite(BUZZER_PIN, LOW);
     }
 
-    delay(500); // Delay untuk pembacaan berikutnya
+    delay(500);
   }
 }

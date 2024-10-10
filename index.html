@@ -1,89 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vehicle Weight Monitor</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 20px;
-    }
-    select, button {
-      padding: 10px;
-      font-size: 16px;
-    }
-    #status, #weight {
-      margin: 20px;
-      font-size: 20px;
-      color: green;
-    }
-    #alert {
-      font-size: 20px;
-      color: red;
-      display: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timbangan Kendaraan</title>
+    <script>
+        async function setVehicleType(vehicleType) {
+            const response = await fetch(`https://Delynessence.github.io/timbangan-kendaraan/setVehicleType?vehicleType=${vehicleType}`);
+            const result = await response.text();
+            console.log(result);
+        }
+
+        async function getWeight() {
+            const response = await fetch(`https://Delynessence.github.io/timbangan-kendaraan/getWeight`);
+            const weight = await response.text();
+            document.getElementById("weightDisplay").innerText = "Current Weight: " + weight + " Kg";
+        }
+
+        setInterval(getWeight, 1000); // Update berat setiap detik
+    </script>
 </head>
 <body>
-
-  <h1>Vehicle Weight Monitoring</h1>
-
-  <label for="vehicleType">Select Vehicle Type:</label>
-  <select id="vehicleType">
-    <option value="Truk">Truck</option>
-    <option value="Mobil">Car</option>
-    <option value="Motor">Motorcycle</option>
-  </select>
-
-  <button onclick="setVehicleType()">Set Vehicle Type</button>
-
-  <div id="status">Waiting for vehicle selection...</div>
-  <div id="weight">Current Weight: 0 Kg</div>
-  <div id="alert">Overload! Maximum capacity exceeded!</div>
-
-  <script>
-    const espIP = 'http://192.168.1.8'; // Replace with your ESP8266's IP address
-
-    // Misalnya, mengganti panggilan ke API seperti ini
-function getWeight() {
-  fetch('https://192.168.1.8/getWeight') // Menggunakan HTTPS
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.text();
-    })
-    .then(data => {
-      console.log('Weight:', data);
-    })
-    .catch(error => {
-      console.error('Error fetching weight:', error);
-    });
-}
-
-// Saat memanggil setVehicleType
-function setVehicleType(vehicleType) {
-  fetch(`https://192.168.1.8/setVehicleType?vehicleType=${vehicleType}`) // Menggunakan HTTPS
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.text();
-    })
-    .then(data => {
-      console.log(data);
-    })
-    .catch(error => {
-      console.error('Error setting vehicle type:', error);
-    });
-}
-
-
-    // Fetch the weight every 2 seconds
-    setInterval(getWeight, 2000);
-  </script>
-
+    <h1>Timbangan Kendaraan</h1>
+    <button onclick="setVehicleType('Mobil')">Set Mobil</button>
+    <button onclick="setVehicleType('Truk')">Set Truk</button>
+    <button onclick="setVehicleType('Motor')">Set Motor</button>
+    <h2 id="weightDisplay">Current Weight: 0 Kg</h2>
 </body>
 </html>
